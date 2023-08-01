@@ -1,3 +1,5 @@
+#model_transformer#
+
 import paddle
 import paddle.nn as nn
 
@@ -63,6 +65,8 @@ class Informer(nn.Layer):
         self.projection = nn.Linear(d_model, c_out)
 
     def forward(self, x_enc, x_dec, enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
+        print(f"Shape of x_enc: {x_enc.shape}")
+        print(f"Shape of x_dec: {x_dec.shape}")
         enc_out = self.enc_embedding(x_enc)
         print(f"Shape of enc_out after enc_embedding: {enc_out.shape}")
         enc_out, _ = self.encoder(enc_out, attn_mask=enc_self_mask)

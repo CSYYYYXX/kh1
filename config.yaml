@@ -44,5 +44,5 @@ prediction:
   decoder_data_split: 4
   decoder_time_spilt: [0, 500, 1000, 1500, 1786]
   cae_ckpt_path: "./summary/ckpt/cae_3200.ckpt"
-  transformer_ckpt_path: "./summary/ckpt/Informer-1_52.ckpt"
+  transformer_ckpt_path: "./summary/ckpt/Informer_19.ckpt"
   prediction_result_dir: "./prediction_result"

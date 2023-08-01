@@ -1,9 +1,11 @@
+#decoder#
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
 
 
 class DecoderLayer(nn.Layer):
+
     def __init__(self, self_attention, cross_attention, d_model, d_ff=None,
                  dropout=0.1, activation="relu"):
         super(DecoderLayer, self).__init__()
@@ -19,6 +21,7 @@ class DecoderLayer(nn.Layer):
         self.activation = F.relu if activation == "relu" else F.gelu
 
     def forward(self, x, cross, x_mask=None, cross_mask=None):
+        print(f"DecoderLayer input shapes: {x.shape}, {cross.shape}")
         x = x + self.dropout(self.self_attention(
             x, x, x,
             attn_mask=x_mask

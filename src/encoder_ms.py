@@ -1,3 +1,4 @@
+#encoder#
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
@@ -15,10 +16,11 @@ class ConvLayer(nn.Layer):
         self.maxPool = nn.MaxPool1D(kernel_size=3, stride=2)
 
     def forward(self, x):
-        x = self.downConv(x.transpose([0, 2, 1]))
+        x = self.downConv(x.transpose((0, 2, 1)))
         x = paddle.squeeze(self.norm(paddle.unsqueeze(x, -1)), -1)
         x = self.activation(x)
-        x = self.maxPool(F.pad(x, [1, 1], data_format='NLC'))
+        x = F.pad(x, [0, 0, 0, 0, 1, 1])
+        x = self.maxPool(x)
         x = x.transpose((0, 2, 1))
         return x
 
@@ -35,6 +37,7 @@ class EncoderLayer(nn.Layer):
         self.activation = F.relu if activation == "relu" else F.gelu
 
     def forward(self, x, attn_mask=None):
+        print(f"EncoderLayer input shape: {x.shape}")
         # x [B, L, D]
         new_x, attn = self.attention(
             x, x, x,

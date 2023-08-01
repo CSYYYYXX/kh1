@@ -99,10 +99,15 @@ def train():
             print(f">>>>>>>>>>>>>>>>>>>>Train_{epoch}<<<<<<<<<<<<<<<<<<<<")
             ts = time.time()
 
-            for batch_id, data in enumerate(dataloader()):
+            for batch_id, data in enumerate(dataloader):
                 seq_x, seq_y = data
                 seq_x = to_variable(seq_x)
                 seq_y = to_variable(seq_y)
+
+                # 打印每个批次的数据形状
+                print(f"Batch ID: {batch_id}")
+                print(f"seq_x shape: {seq_x.shape}")
+                print(f"seq_y shape: {seq_y.shape}")
 
                 loss = loss_net(seq_x, seq_y)
                 loss.backward()
@@ -112,7 +117,7 @@ def train():
                 if batch_id % 50 == 0:
                     print(f"Epoch: {epoch}, batch: {batch_id}, loss is: {loss.numpy()}")
 
-            paddle.save(model.state_dict(), os.path.join(ckpt_dir, f"model_{epoch}.pdparams"))
+            paddle.save(model.state_dict(), os.path.join(ckpt_dir, f"Informer_{epoch}.ckpt"))
 
             print("Train Time Cost:", time.time() - ts)
 

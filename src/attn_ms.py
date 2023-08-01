@@ -25,7 +25,7 @@ class FullAttention(nn.Layer):
             if attn_mask is None:
                 mask_shape = (B, H, L, L)
                 attn_mask = paddle.triu(paddle.ones(mask_shape), diagonal=1).astype(paddle.bool)
-            scores = scores.masked_fill(attn_mask, float('-inf'))
+            scores = mask_fill(attn_mask, scores, -np.inf)
 
         A = self.dropout(F.softmax(scores * scale, axis=-1))
         V = paddle.matmul(A, values.transpose((0, 2, 1, 3))).transpose((0, 2, 1, 3))
@@ -126,11 +126,11 @@ class AttentionLayer(nn.Layer):
                  d_keys=None, d_values=None, mix=False):
         super(AttentionLayer, self).__init__()
 
-        d_keys = d_keys or d_model
+        d_keys = d_keys or (d_model // n_heads)
         d_values = d_values or (d_model // n_heads)
-
+        print(f"Shape of d_model,d_keys.d_values: {d_model, d_keys, d_values}")
         self.inner_attention = attention
-        self.query_projection = nn.Linear(d_model, d_keys * n_heads)
+        self.query_projection = nn.Linear(d_model, d_model)
         self.key_projection = nn.Linear(d_model, d_keys * n_heads)
         self.value_projection = nn.Linear(d_model, d_values * n_heads)
         self.out_projection = nn.Linear(d_values * n_heads, d_model)
@@ -143,6 +143,8 @@ class AttentionLayer(nn.Layer):
         H = self.n_heads
 
         print(f"Shape of queries: {queries.shape}")
+        print("Shape of self.query_projection.weight:", self.query_projection.weight.shape)
+        print("Shape of self.query_projection.bias:", self.query_projection.bias.shape)
 
         queries = self.query_projection(queries).reshape((B, L, H, -1))
         keys = self.key_projection(keys).reshape((B, S, H, -1))

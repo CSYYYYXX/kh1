@@ -121,6 +121,6 @@ def plot_cae_transformer_prediction(
     plt.close()
 
     # save prediction
-    np.save(f"{plot_dir}/transformer_latent.npy", lstm_latent.asnumpy())
+    np.save(f"{plot_dir}/transformer_latent.npy", lstm_latent.numpy())
     np.save(f"{plot_dir}/cae_transformer_predict.npy", cae_lstm_predict)
     np.save(f"{plot_dir}/cae_transformer_error.npy", cae_lstm_error)

@@ -36,8 +36,12 @@ def create_transformer_dataset(latent_true, batch_size, time_size, latent_size, 
     for i in range(latent_size):
         encoded_f[:, i] = gaussian_filter1d(encoded_f[:, i], sigma=gaussian_filter_sigma)
 
+    print("Shape of encoded_f after Gaussian filter:", encoded_f.shape)  # 添加的打印语句
+
     input_seq = np.zeros(shape=(time_size - time_window, time_window, latent_size)).astype(np.float32)
     output_seq = np.zeros(shape=(time_size - time_window, 1, latent_size)).astype(np.float32)
+
+    print("Shape of input_seq and output_seq:", input_seq.shape, output_seq.shape)  # 添加的打印语句
 
     sample = 0
     for t in range(time_window, time_size):
@@ -45,9 +49,15 @@ def create_transformer_dataset(latent_true, batch_size, time_size, latent_size, 
         output_seq[sample, 0, :] = encoded_f[t, :]
         sample = sample + 1
 
-    dataset = CreateDataset(input_seq, output_seq)
-    loader = DataLoader(dataset, batch_size=batch_size, drop_last=True, shuffle=True)
+        if sample % 100 == 0:  # 每100个样本打印一次
+            print(f"Sample {sample}, t {t}, Shape of input_seq[sample] and output_seq[sample]:",
+                  input_seq[sample].shape, output_seq[sample].shape)  # 添加的打印语句
 
-    return loader, input_seq
+    dataset = CreateDataset(input_seq, output_seq)
+    dataloader = DataLoader(dataset, batch_size=batch_size, drop_last=True, shuffle=True)
+    print(f"Shape of output: {output_seq.shape,input_seq.shape}")
+
+    return dataloader, input_seq
+
 
 

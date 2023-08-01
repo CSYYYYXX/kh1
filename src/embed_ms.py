@@ -39,6 +39,10 @@ class DataEmbedding(nn.Layer):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
-        x = self.value_embedding(x) + self.position_embedding(x)
+        value_emb = self.value_embedding(x)
+        pos_emb = self.position_embedding(x)
 
-        return self.dropout(x)
+        x = value_emb + pos_emb
+        x = self.dropout(x)
+
+        return x
